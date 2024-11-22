@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+<style>
+  button,input,label {
+    width:95%;
+    margin:5px;
+    height:45px;
+    border-radius:45px;
+  }
+  html, body {
+    color:white;
+    background:#B8BA32; 
+  }
+</style>
+<body>
+  <div>
+    <h3>Comprar Way de Exame com Mpesa ou Emola:</h3>
+    <label id="price"></label>
+    <input type="number" placeholder="número Mpesa ou Emola" id="number"/>
+    <button>Confirmar</button>
+    <label for="">* Terá de confirmar o pagamento no seu Celular</label>
+  </div>
+<a href="./todos-exames.pdf" id="download"></a>
+<script src="./mozpayment.client.js"></script>  
+<script src="./loading.js"></script>
+<script>  
+  document.querySelector("button").addEventListener("click",(ev)=>{
+    purchase (ev.target);
+  })
+  
+  const loadingFlow={
+    flow:null
+  }
+  const hash=window.location.hash;
+  if(hash.replace(/#/,"")==""){
+    window.location.href="./"
+  }
+  const price=parseInt(hash.replace(/#/,""))*25;
+  document.getElementById("price").innerHTML="<h2><b>preço:</b> "+price+" MT</h2>";
+  document.title="comprar way de exame "+hash.replace("#","")+"ª classe";
+  console.log(pay)
+  //window.history.pushState(null,"Comprar Way Exame "+hash.replace(/#/,"")+"ª classe","/checkout/"+hash.replace("#",""))
+  switch (hash.replace(/#/,"") ){
+    case "10":
+      
+      break;
+    case "12":
+      
+      break;
+    default:
+    window.location.href="./";
+    break;
+  }
+  function paymentResponse(data){
+    loadingFlow.flow.end();
+    console.log(data);
+    if(data.success){
+      alert("Pagamento Feito com sucesso, o Exame está sendo baixados!");
+      document.getElementById("download").click();
+    }
+    else{
+      alert('O pagamento Falhou, tente novamente.');
+    }
+  }
+  function paymentFail(e){
+    loadingFlow.flow.end();
+    console.log("Payment Failed because:",e);
+    alert("O pagamento Falhou Tente novamente.")
+  }
+  
+   function purchase(e){
+    const carteira="1729289479234x569148098747564000";
+    const numero=""+document.getElementById("number").value+"";
+    const who="comprador de ways";
+    const valor=""+price+"";
+    const data={carteira,numero,valor,"quem comprou":who};
+    if(numero.length!=9){
+      alert("Número inserido é inválido, verifique o número e tente novamente.");
+      return;
+    }
+    const loading=showLoading(e);
+    loadingFlow.flow=loading;
+    if(numero.startsWith("85") || numero.startsWith("84")){
+      pay.pagamentoMpesa(data).then(paymentResponse).catch(paymentFail)
+    }
+    else if(numero.startsWith("86") || numero.startsWith("87")){
+      pay.pagamentoEmola(data).then(paymentResponse).catch(paymentFail)
+    }
+    else {
+      alert("Use apenas Mpesa ou Emola ");
+    }
+  }
+</script>
+</body>
+
+</html>
