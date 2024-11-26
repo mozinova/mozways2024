@@ -20,7 +20,7 @@
 </style>
 <body>
   <div>
-    <h3>Comprar Way de Exame com Mpesa ou Emola:</h3>
+    <h3>Comprar Entrada para o Grupo VIP de Ways de Exame com Mpesa ou Emola:</h3>
     <label id="price"></label>
     <input type="number" placeholder="número Mpesa ou Emola" id="number"/>
     <button>Confirmar</button>
@@ -60,8 +60,8 @@
   function paymentResponse(data){
     loadingFlow.flow.end();
     console.log(data);
-    if(data.success){
-      alert("Pagamento Feito com sucesso, o Exame está sendo baixados!");
+    if(data.status){
+      alert("Pagamento Feito com sucesso, Você esta sendo levado ao grupo VIP");
       document.getElementById("download").click();
     }
     else{
@@ -86,6 +86,7 @@
     }
     const loading=showLoading(e);
     loadingFlow.flow=loading;
+    //paymentResponse({success:true})
     if(numero.startsWith("85") || numero.startsWith("84")){
       pay.pagamentoMpesa(data).then(paymentResponse).catch(paymentFail)
     }
