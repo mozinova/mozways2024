@@ -17,19 +17,32 @@
     color:white;
     background:#B8BA32; 
   }
+  .card{
+    display: none;
+    color:green;
+    padding: 20px;
+    margin:20px;
+    font-size: 20px;
+    color:ghostwhite;
+      }
 </style>
 <body>
   <div>
-    <h3>Comprar Entrada para o Grupo VIP de Ways de Exame com Mpesa ou Emola:</h3>
+    <h3>Comprar <span id="product"></span> com Mpesa ou Emola:</h3>
+    <div class="card">
+
+    </div>
     <label id="price"></label>
     <input type="number" placeholder="número Mpesa ou Emola" id="number"/>
     <button>Confirmar</button>
     <label for="">* Terá de confirmar o pagamento no seu Celular</label>
   </div>
-<a href="https://chat.whatsapp.com/FLupcd4AsvZGoxBAPrRBDb" id="download"></a>
+<a href="./todos-exames.pdf" id="download"></a>
+<script type="text/javascript" src="crypto.js"></script>
 <script src="./mozpayment.client.js"></script>  
 <script src="./loading.js"></script>
 <script>  
+   
   document.querySelector("button").addEventListener("click",(ev)=>{
     purchase (ev.target);
   })
@@ -37,13 +50,16 @@
   const loadingFlow={
     flow:null
   }
-  const hash=window.location.hash;
+  var hash=window.location.hash;
   if(hash.replace(/#/,"")==""){
     window.location.href="./"
   }
-  const price=parseInt(hash.replace(/#/,""))*25;
+  const desc=hash.split("-")[1];
+  document.getElementById("product").innerHTML=desc.replace(/%20/g," ");
+    hash=hash.split("-")[0]
+  const price=(parseInt(hash.replace(/#/,""))*25)+50;
   document.getElementById("price").innerHTML="<h2><b>preço:</b> "+price+" MT</h2>";
-  document.title="comprar way de exame "+hash.replace("#","")+"ª classe";
+  document.title="comprar "+desc;
   console.log(pay)
   //window.history.pushState(null,"Comprar Way Exame "+hash.replace(/#/,"")+"ª classe","/checkout/"+hash.replace("#",""))
   switch (hash.replace(/#/,"") ){
@@ -53,6 +69,8 @@
     case "12":
       
       break;
+   case "18":
+    break;
     default:
     window.location.href="./";
     break;
@@ -60,9 +78,13 @@
   function paymentResponse(data){
     loadingFlow.flow.end();
     console.log(data);
-    if(data.status){
-      alert("Pagamento Feito com sucesso, Você esta sendo levado ao grupo VIP");
-      document.getElementById("download").click();
+    if(data.success){
+      alert("Pagamento Feito com sucesso");
+    //  document.getElementById("download").click();
+      const card=document.querySelector(".card");
+      let codigo=gerarCodigoRecibo(window.location.hash.replace("#",""),price.toString(),""+document.getElementById("number").value+"");
+      card.style.display="block"
+      card.innerHTML=`<p> O seu codigo de compra e:<br>${codigo}</p>`;
     }
     else{
       alert('O pagamento Falhou, tente novamente.');
@@ -86,14 +108,14 @@
     }
     const loading=showLoading(e);
     loadingFlow.flow=loading;
-    //paymentResponse({success:true})
+    
     if(numero.startsWith("85") || numero.startsWith("84")){
       pay.pagamentoMpesa(data).then(paymentResponse).catch(paymentFail)
     }
     else if(numero.startsWith("86") || numero.startsWith("87")){
       pay.pagamentoEmola(data).then(paymentResponse).catch(paymentFail)
     }
-    else {
+     else {
       alert("Use apenas Mpesa ou Emola ");
     }
   }
