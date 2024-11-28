@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+9<!DOCTYPE html>
 <html>
 
 <head>
@@ -57,7 +57,7 @@
   const desc=hash.split("-")[1];
   document.getElementById("product").innerHTML=desc.replace(/%20/g," ");
     hash=hash.split("-")[0]
-  const price=(parseInt(hash.replace(/#/,""))*25)+50;
+  const price=(parseInt(hash.replace(/#/,""))*25);
   document.getElementById("price").innerHTML="<h2><b>preço:</b> "+price+" MT</h2>";
   document.title="comprar "+desc;
   console.log(pay)
